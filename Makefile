@@ -27,3 +27,6 @@ down:
 
 restart: stop start
 
+migration:
+	sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate'
+
