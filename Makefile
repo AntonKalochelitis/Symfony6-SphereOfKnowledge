@@ -27,6 +27,9 @@ down:
 
 restart: stop start
 
+composer_install:
+	sudo docker exec -t symfony6-php-fpm bash -c 'composer install'
+
 migration:
-	sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate'
+	sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate --no-interaction'
 

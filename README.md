@@ -1,27 +1,47 @@
-# Symfony
+# Symfony 6
 
-### Install project 
+## Установка проекта
 
-- 1) Откройте файл .env и установите секретный ключ APP_SECRET=your_secret_here
-- 
-- 2) Для старта проекта запустите в корневой дирректории
-- `$ make up`
-- или если не установлен make, запустите
-- `sudo docker-compose -f docker-compose.yml --env-file=.env up -d --build --remove-orphans`
-- 
-- 3) Для установки зависимостей, запускаем `compose install`
-- 
-- 4) В корне проекта  для папки var выделяем расширенные права `sudo chmod -R 777 ./var`
-- 
-- 5) Для применения миграций запускаем `$ make migration`
-- 
-- 6) Получение документации по ссылке:
-- http://127.0.0.1:9580/api/doc
+1. Откройте файл `.env` и установите секретный ключ:
+   APP_SECRET=your_secret_here
 
-### Working url
+2. Для запуска проекта выполните следующую команду в корневой директории:
+```shell
+$ make up
+```
+Или, если make не установлен, используйте:
+```shell
+$ sudo docker-compose -f docker-compose.yml --env-file=.env up -d --build --remove-orphans
+```
+3. Для установки зависимостей, выполните:
+```shell
+$ make composer_install
+```
+Или, если make не установлен, используйте:
+```shell
+$ sudo docker exec -t symfony6-php-fpm bash -c 'composer install'
+```
+4. Для папки var в корне проекта установите расширенные права:
+```shell
+$ sudo chmod -R 777 ./var
+```
+5. Для применения миграций, в корне проекта, выполните:
+```shell
+make migration
+```
+Или, если make не установлен, используйте:
+```shell
+sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate --no-interaction'
+```
+6. После успешной установки, получите документацию по следующей ссылке:
+   http://127.0.0.1:9580/api/doc
 
-- http://127.0.0.1:9580/api/workers
-- http://127.0.0.1:9580/api/worker/{id}
-- http://127.0.0.1:9580/api/worker/{id}
-- http://127.0.0.1:9580/api/worker/{id}
-- http://127.0.0.1:9580/api/worker/create
+## Рабочие URL
+```shell
+    http://127.0.0.1:9580/api/doc
+    http://127.0.0.1:9580/api/workers
+    http://127.0.0.1:9580/api/worker/{id}
+    http://127.0.0.1:9580/api/worker/{id}
+    http://127.0.0.1:9580/api/worker/{id}
+    http://127.0.0.1:9580/api/worker/create
+```
