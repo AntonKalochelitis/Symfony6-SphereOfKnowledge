@@ -36,6 +36,24 @@ sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:
 6. После успешной установки, получите документацию по следующей ссылке:
    http://127.0.0.1:9580/api/doc
 
+7. Для запуска тестов:
+Один раз запускаем 
+```shell
+   test_install
+```
+```shell
+   make test
+```
+Или, если make не установлен, используйте:
+```shell
+   sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:database:create --env=test'
+   sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate --env=test  --no-interaction'
+```
+```shell
+   sudo docker exec -t symfony6-php-fpm bash -c './bin/phpunit'
+```
+Тесты проверяют подключение, создание, обновление, получение, удаление из списка Workers
+
 ## Рабочие URL
 ```shell
     http://127.0.0.1:9580/api/doc

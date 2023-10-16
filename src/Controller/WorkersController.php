@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
-use OpenApi\Annotations as OAS;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -137,14 +136,31 @@ class WorkersController extends AbstractController
         description: 'Worker successful created',
         content: new Model(type: Workers::class)
     )]
+    #[OA\Response(
+        response: Response::HTTP_INTERNAL_SERVER_ERROR,
+        description: 'Worker not created',
+        content: new OA\JsonContent(
+            example: '{"status": false}'
+        )
+    )]
     public function createWorker(Request $request)
     {
-        /** @var DTOCreate $dto */
-        $dto = $this->serializer->deserialize(
-            $request->getContent(),
-            DTOCreate::class,
-            'json'
-        );
+        try {
+            /** @var DTOCreate $dto */
+            $dto = $this->serializer->deserialize(
+                $request->getContent(),
+                DTOCreate::class,
+                'json'
+            );
+        } catch (\Exception $e) {
+            return $this->json(
+                [
+                    'status' => false,
+                    'message' => $e->getMessage()
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
 
         $errors = $this->validator->validate($dto);
         if (count($errors) > 0) {

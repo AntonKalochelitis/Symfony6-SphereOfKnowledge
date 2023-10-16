@@ -30,6 +30,12 @@ restart: stop start
 composer_install:
 	sudo docker exec -t symfony6-php-fpm bash -c 'composer install'
 
+test_install:
+	sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:database:create --env=test'
+	sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate --env=test  --no-interaction'
+
+test:
+	sudo docker exec -t symfony6-php-fpm bash -c './bin/phpunit'
+
 migration:
 	sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate --no-interaction'
-
