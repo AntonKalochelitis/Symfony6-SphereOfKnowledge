@@ -59,10 +59,10 @@ sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:
 
 ## Рабочие URL
 ```shell
-    http://127.0.0.1:9580/api/doc
-    http://127.0.0.1:9580/api/workers
-    http://127.0.0.1:9580/api/worker/{id}
-    http://127.0.0.1:9580/api/worker/{id}
-    http://127.0.0.1:9580/api/worker/{id}
-    http://127.0.0.1:9580/api/worker/create
+    GET    http://127.0.0.1:9580/api/doc
+    GET    http://127.0.0.1:9580/api/workers
+    GET    http://127.0.0.1:9580/api/worker/{id}
+    PUT    http://127.0.0.1:9580/api/worker/{id}
+    DELETE http://127.0.0.1:9580/api/worker/{id}
+    POST   http://127.0.0.1:9580/api/worker/create
 ```
