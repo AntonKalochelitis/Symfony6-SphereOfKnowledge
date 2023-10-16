@@ -42,6 +42,7 @@ sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:
 ```shell
    test_install
 ```
+Для запуска тестов:
 ```shell
    make test
 ```
@@ -50,6 +51,7 @@ sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:
    sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:database:create --env=test'
    sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate --env=test  --no-interaction'
 ```
+Для запуска тестов:
 ```shell
    sudo docker exec -t symfony6-php-fpm bash -c './bin/phpunit'
 ```
