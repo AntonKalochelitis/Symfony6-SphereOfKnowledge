@@ -25,6 +25,9 @@ up:
 down:
 	${DOCKER_COMPOSE} down
 
+rm:
+	${DOCKER_COMPOSE} rm
+
 restart: stop start
 
 composer_install:
