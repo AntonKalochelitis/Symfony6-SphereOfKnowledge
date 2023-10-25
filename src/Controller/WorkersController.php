@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\DTO\DTOCreate;
 use App\DTO\DTOUpdate;
 use App\Entity\Worker;
-use App\Repository\WorkersRepository;
 use App\Service\Workers as ServiceWorker;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -23,7 +22,6 @@ use Psr\Log\LoggerInterface;
 class WorkersController extends AbstractController
 {
     public function __construct(
-        protected WorkersRepository      $workersRepository,
         protected EntityManagerInterface $entityManager,
         protected SerializerInterface    $serializer,
         protected ValidatorInterface     $validator,
@@ -45,8 +43,6 @@ class WorkersController extends AbstractController
     )]
     public function getWorkers()
     {
-        $error = '';
-
         try {
             $workers = $this->serviceWorker->getWorgerList();
 
@@ -83,9 +79,11 @@ class WorkersController extends AbstractController
     public function getWorker(int $id)
     {
         try {
-            $worker = $this->workersRepository->find($id);
+            $worker = $this->serviceWorker->getWorgerBy($id);
         } catch (NotFoundHttpException $e) {
-            $this->logger->alert($e->getMessage());
+            $error = $e->getMessage();
+
+            $this->logger->alert($error);
 
             return $this->json(
                 [
@@ -96,7 +94,9 @@ class WorkersController extends AbstractController
         }
 
         if (empty($worker)) {
-            $this->logger->alert('Worker with ID:' . $id . ' not found');
+            $error = 'Worker with ID:' . $id . ' not found';
+
+            $this->logger->alert($error);
 
             return $this->json(
                 [
@@ -161,7 +161,7 @@ class WorkersController extends AbstractController
             );
         }
 
-        $worker = $this->serviceWorker->create(new Worker(), $dto);
+        $worker = $this->serviceWorker->createWorker(new Worker(), $dto);
 
         return $this->json(
             $worker,
@@ -194,7 +194,7 @@ class WorkersController extends AbstractController
     public function updateWorker(Request $request, int $id)
     {
         try {
-            $worker = $this->workersRepository->find($id);
+            $worker = $this->serviceWorker->getWorgerBy($id);
         } catch (NotFoundHttpException $e) {
             $this->logger->alert($e->getMessage());
 
@@ -232,7 +232,7 @@ class WorkersController extends AbstractController
             );
         }
 
-        $worker = $this->serviceWorker->update($worker, $dto);
+        $worker = $this->serviceWorker->updateWorkerByWorker($worker, $dto);
 
         return $this->json(
             $worker,
@@ -258,12 +258,8 @@ class WorkersController extends AbstractController
     )]
     public function deleteWorker(int $id)
     {
-        /** @var Worker $worker */
-        $worker = $this->workersRepository->find($id);
-
         try {
-            $this->entityManager->remove($worker);
-            $this->entityManager->flush();
+            $this->serviceWorker->deleteWorkerById($id);
 
             return $this->json(
                 [
