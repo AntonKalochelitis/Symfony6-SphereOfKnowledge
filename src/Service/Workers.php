@@ -4,19 +4,23 @@ namespace App\Service;
 
 use App\DTO\DTOCreate;
 use App\DTO\DTOUpdate;
-use App\Entity\Workers as EntityWorker;
+use App\Entity\Worker as EntityWorker;
+use App\Repository\WorkersRepository;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 
 class Workers
 {
-    private EntityManagerInterface $entityManager;
-
     public function __construct(
-        EntityManagerInterface $entityManager
+        protected WorkersRepository      $workersRepository,
+        protected EntityManagerInterface $entityManager
     )
     {
-        $this->entityManager = $entityManager;
+    }
+
+    public function getWorgerList()
+    {
+        return $this->workersRepository->findAll();
     }
 
     public function create(EntityWorker $worker, DTOCreate $tdo): EntityWorker

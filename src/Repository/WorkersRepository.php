@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Workers;
+use App\Entity\Worker;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Workers>
+ * @extends ServiceEntityRepository<Worker>
  *
- * @method Workers|null find($id, $lockMode = null, $lockVersion = null)
- * @method Workers|null findOneBy(array $criteria, array $orderBy = null)
- * @method Workers[]    findAll()
- * @method Workers[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Worker|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Worker|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Worker[]    findAll()
+ * @method Worker[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class WorkersRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Workers::class);
+        parent::__construct($registry, Worker::class);
     }
 
 //    /**
-//     * @return Workers[] Returns an array of Workers objects
+//     * @return Worker[] Returns an array of Worker objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -36,7 +36,7 @@ class WorkersRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Workers
+//    public function findOneBySomeField($value): ?Worker
 //    {
 //        return $this->createQueryBuilder('u')
 //            ->andWhere('u.exampleField = :val')

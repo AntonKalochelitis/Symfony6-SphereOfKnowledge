@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Entity\Workers;
+use App\Entity\Worker;
 use App\Repository\WorkersRepository;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class WorkerCheckerTest extends KernelTestCase
 {
-    private function createMockWorker($worker, $hiringDate): Workers
+    private function createMockWorker($worker, $hiringDate): Worker
     {
         $worker->setId(1000000);
         $worker->setFirstName('Test1');
@@ -26,9 +26,9 @@ class WorkerCheckerTest extends KernelTestCase
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
 
-        $worker = new Workers();
+        $worker = new Worker();
 
-        $this->assertInstanceOf(Workers::class, $worker);
+        $this->assertInstanceOf(Worker::class, $worker);
 
         $hiringDate = \DateTimeImmutable::createFromMutable(Carbon::createFromTimestamp(time()));
         $worker = $this->createMockWorker($worker, $hiringDate);
@@ -48,9 +48,9 @@ class WorkerCheckerTest extends KernelTestCase
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
 
-        $worker = new Workers();
+        $worker = new Worker();
 
-        $this->assertInstanceOf(Workers::class, $worker);
+        $this->assertInstanceOf(Worker::class, $worker);
 
         $hiringDate = \DateTimeImmutable::createFromMutable(Carbon::createFromTimestamp(time()));
         $worker = $this->createMockWorker($worker, $hiringDate);
@@ -79,9 +79,9 @@ class WorkerCheckerTest extends KernelTestCase
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
 
-        $worker = new Workers();
+        $worker = new Worker();
 
-        $this->assertInstanceOf(Workers::class, $worker);
+        $this->assertInstanceOf(Worker::class, $worker);
 
         $hiringDate = \DateTimeImmutable::createFromMutable(Carbon::createFromTimestamp(time()));
         $worker = $this->createMockWorker($worker, $hiringDate);

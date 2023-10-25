@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\DTO\DTOCreate;
 use App\DTO\DTOUpdate;
-use App\Entity\Workers;
+use App\Entity\Worker;
 use App\Repository\WorkersRepository;
 use App\Service\Workers as ServiceWorker;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,28 +22,15 @@ use Psr\Log\LoggerInterface;
 
 class WorkersController extends AbstractController
 {
-    protected WorkersRepository $workersRepository;
-    protected EntityManagerInterface $entityManager;
-    protected SerializerInterface $serializer;
-    protected ValidatorInterface $validator;
-    protected ServiceWorker $serviceWorker;
-    protected LoggerInterface $logger;
-
     public function __construct(
-        WorkersRepository      $workersRepository,
-        EntityManagerInterface $entityManager,
-        SerializerInterface    $serializer,
-        ValidatorInterface     $validator,
-        ServiceWorker          $serviceWorker,
-        LoggerInterface        $logger
+        protected WorkersRepository      $workersRepository,
+        protected EntityManagerInterface $entityManager,
+        protected SerializerInterface    $serializer,
+        protected ValidatorInterface     $validator,
+        protected ServiceWorker          $serviceWorker,
+        protected LoggerInterface        $logger
     )
     {
-        $this->workersRepository = $workersRepository;
-        $this->entityManager = $entityManager;
-        $this->serializer = $serializer;
-        $this->validator = $validator;
-        $this->serviceWorker = $serviceWorker;
-        $this->logger = $logger;
     }
 
     #[Route('/api/workers', name: 'get_worker_list', methods: ['GET'])]
@@ -53,26 +40,30 @@ class WorkersController extends AbstractController
         description: 'The list of worker became successful',
         content: new OA\JsonContent(
             type: "array",
-            items: new OA\Items(ref: new Model(type: Workers::class))
+            items: new OA\Items(ref: new Model(type: Worker::class))
         )
     )]
     public function getWorkers()
     {
+        $error = '';
+
         try {
-            $workers = $this->workersRepository->findAll();
+            $workers = $this->serviceWorker->getWorgerList();
 
             return $this->json(
                 $workers,
                 Response::HTTP_OK
             );
         } catch (\Exception $e) {
-            $this->logger->error($e->getMessage());
+            $error = $e->getMessage();
 
-            return $this->json(
-                $e->getMessage(),
-                Response::HTTP_NOT_FOUND
-            );
+            $this->logger->error($error);
         }
+
+        return $this->json(
+            $error,
+            Response::HTTP_NOT_FOUND
+        );
     }
 
     #[Route('/api/worker/{id}', name: 'get_worker_by_id', methods: ['GET'])]
@@ -80,7 +71,7 @@ class WorkersController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Worker loaded successful',
-        content: new Model(type: Workers::class)
+        content: new Model(type: Worker::class)
     )]
     #[OA\Response(
         response: Response::HTTP_GONE,
@@ -134,7 +125,7 @@ class WorkersController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_CREATED,
         description: 'Worker successful created',
-        content: new Model(type: Workers::class)
+        content: new Model(type: Worker::class)
     )]
     #[OA\Response(
         response: Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -170,7 +161,7 @@ class WorkersController extends AbstractController
             );
         }
 
-        $worker = $this->serviceWorker->create(new Workers(), $dto);
+        $worker = $this->serviceWorker->create(new Worker(), $dto);
 
         return $this->json(
             $worker,
@@ -191,7 +182,7 @@ class WorkersController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Worker successful updated',
-        content: new Model(type: Workers::class)
+        content: new Model(type: Worker::class)
     )]
     #[OA\Response(
         response: Response::HTTP_GONE,
@@ -267,7 +258,7 @@ class WorkersController extends AbstractController
     )]
     public function deleteWorker(int $id)
     {
-        /** @var Workers $worker */
+        /** @var Worker $worker */
         $worker = $this->workersRepository->find($id);
 
         try {
