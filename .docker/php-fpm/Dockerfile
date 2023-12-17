@@ -70,8 +70,5 @@ ENV LC_ALL en_US.UTF-8
 COPY www.conf /usr/local/etc/php-fpm.d
 COPY ${APP_ENV}/opcache.ini "$PHP_INI_DIR"/conf.d
 COPY ${APP_ENV}/php.ini "$PHP_INI_DIR"/conf.d
-#COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-EXPOSE 3001
 
 WORKDIR "/app"

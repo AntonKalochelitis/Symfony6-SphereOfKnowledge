@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityManagerInterface;
 class Workers
 {
     public function __construct(
-        protected WorkersRepository      $workersRepository,
-        protected EntityManagerInterface $entityManager
+        protected EntityManagerInterface $entityManager,
+        protected WorkersRepository      $workersRepository
     )
     {
     }
@@ -74,7 +74,7 @@ class Workers
         $worker->setUpdated($create);
         $worker->setCreated($create);
 
-        // Заполните сущность Worker данными из $data
+        //
         $this->entityManager->persist($worker);
         $this->entityManager->flush();
 
@@ -87,7 +87,7 @@ class Workers
      */
     public function deleteWorkerById(int $id): void
     {
-        /** @var Worker $worker */
+        /** @var EntityWorker $worker */
         $worker = $this->workersRepository->find($id);
 
         $this->entityManager->remove($worker);

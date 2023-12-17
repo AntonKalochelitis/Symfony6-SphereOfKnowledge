@@ -24,21 +24,14 @@ services:
       context: ./.docker/php-fpm
       args:
         APP_ENV: ${APP_ENV}
-        PUID: ${PUID}
-        PGID: ${PGID}
     volumes:
       - ./:/app:rw
       - ./var/log:/app/var/log:rw
     working_dir: /app
-    ports:
-      - "3501:3001"
-      - "3500:3000"
-    expose:
-      - 3001
     restart: always
 
   mysql:
-    container_name: symfony6-mysql57
+    container_name: ${MYSQL_HOST}
     image: mysql:5.7
     ports:
       - "53306:3306"

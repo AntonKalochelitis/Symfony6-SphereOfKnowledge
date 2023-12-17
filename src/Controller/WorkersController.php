@@ -15,6 +15,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Psr\Log\LoggerInterface;
@@ -41,9 +42,18 @@ class WorkersController extends AbstractController
             items: new OA\Items(ref: new Model(type: Worker::class))
         )
     )]
-    public function getWorkers()
+    #[OA\Response(
+        response: Response::HTTP_NOT_FOUND,
+        description: 'Workers not found',
+        content: new OA\JsonContent(
+            example: '{"error": string}'
+        )
+    )]
+    public function getWorkers(UserInterface $user): Response
     {
+        dd($user);
         try {
+
             $workers = $this->serviceWorker->getWorgerList();
 
             return $this->json(
@@ -57,7 +67,9 @@ class WorkersController extends AbstractController
         }
 
         return $this->json(
-            $error,
+            [
+                'error' => $error
+            ],
             Response::HTTP_NOT_FOUND
         );
     }
@@ -76,7 +88,7 @@ class WorkersController extends AbstractController
             example: '{"status": false}'
         )
     )]
-    public function getWorker(int $id)
+    public function getWorkerById(int $id): Response
     {
         try {
             $worker = $this->serviceWorker->getWorgerBy($id);
@@ -134,7 +146,7 @@ class WorkersController extends AbstractController
             example: '{"status": false}'
         )
     )]
-    public function createWorker(Request $request)
+    public function createWorker(Request $request): Response
     {
         try {
             /** @var DTOCreate $dto */
@@ -191,7 +203,7 @@ class WorkersController extends AbstractController
             example: '{"status": false}'
         )
     )]
-    public function updateWorker(Request $request, int $id)
+    public function updateWorker(Request $request, int $id): Response
     {
         try {
             $worker = $this->serviceWorker->getWorgerBy($id);
@@ -256,7 +268,7 @@ class WorkersController extends AbstractController
             example: '{"status": false}'
         )
     )]
-    public function deleteWorker(int $id)
+    public function deleteWorker(int $id): Response
     {
         try {
             $this->serviceWorker->deleteWorkerById($id);

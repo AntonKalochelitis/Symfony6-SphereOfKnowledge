@@ -4,6 +4,12 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+api_login_check:
+    path: /api/login/check
+
+api_refresh_token:
+    path: /api/token/refresh
+
 app.swagger_ui:
     path: /api/doc
     methods: GET
