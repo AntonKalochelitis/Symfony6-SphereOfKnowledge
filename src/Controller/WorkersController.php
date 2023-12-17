@@ -51,7 +51,6 @@ class WorkersController extends AbstractController
     )]
     public function getWorkers(UserInterface $user): Response
     {
-        dd($user);
         try {
 
             $workers = $this->serviceWorker->getWorgerList();
@@ -88,7 +87,7 @@ class WorkersController extends AbstractController
             example: '{"status": false}'
         )
     )]
-    public function getWorkerById(int $id): Response
+    public function getWorkerById(int $id, UserInterface $user): Response
     {
         try {
             $worker = $this->serviceWorker->getWorgerBy($id);
@@ -146,7 +145,7 @@ class WorkersController extends AbstractController
             example: '{"status": false}'
         )
     )]
-    public function createWorker(Request $request): Response
+    public function createWorker(Request $request, UserInterface $user): Response
     {
         try {
             /** @var DTOCreate $dto */
@@ -203,7 +202,7 @@ class WorkersController extends AbstractController
             example: '{"status": false}'
         )
     )]
-    public function updateWorker(Request $request, int $id): Response
+    public function updateWorker(int $id, Request $request, UserInterface $user): Response
     {
         try {
             $worker = $this->serviceWorker->getWorgerBy($id);
@@ -268,7 +267,7 @@ class WorkersController extends AbstractController
             example: '{"status": false}'
         )
     )]
-    public function deleteWorker(int $id): Response
+    public function deleteWorker(int $id, UserInterface $user): Response
     {
         try {
             $this->serviceWorker->deleteWorkerById($id);
