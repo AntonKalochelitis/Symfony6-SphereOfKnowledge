@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\DTO\DTOCreate;
 use App\DTO\DTOUpdate;
-use App\Entity\Worker;
-use App\Service\Workers as ServiceWorker;
+use App\Entity\Entity;
+use App\Service\Entity as ServiceEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,43 +20,42 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Psr\Log\LoggerInterface;
 
-class WorkersController extends AbstractController
+class EntityController extends AbstractController
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
         protected SerializerInterface    $serializer,
         protected ValidatorInterface     $validator,
-        protected ServiceWorker          $serviceWorker,
+        protected ServiceEntity          $serviceEntity,
         protected LoggerInterface        $logger
     )
     {
     }
 
-    #[Route('/api/workers', name: 'get_worker_list', methods: ['GET'])]
-    #[OA\Tag(name: 'Get worker list')]
+    #[Route('/api/entity-list', name: 'get_entity_list', methods: ['GET'])]
+    #[OA\Tag(name: 'Get Entity list')]
     #[OA\Response(
         response: Response::HTTP_OK,
-        description: 'The list of worker became successful',
+        description: 'The list of Entity became successful',
         content: new OA\JsonContent(
             type: "array",
-            items: new OA\Items(ref: new Model(type: Worker::class))
+            items: new OA\Items(ref: new Model(type: Entity::class))
         )
     )]
     #[OA\Response(
         response: Response::HTTP_NOT_FOUND,
-        description: 'Workers not found',
+        description: 'Entity not found',
         content: new OA\JsonContent(
             example: '{"error": string}'
         )
     )]
-    public function getWorkers(UserInterface $user): Response
+    public function getEntityList(UserInterface $user): Response
     {
         try {
-
-            $workers = $this->serviceWorker->getWorgerList();
+            $entityList = $this->serviceEntity->getEntityList();
 
             return $this->json(
-                $workers,
+                $entityList,
                 Response::HTTP_OK
             );
         } catch (\Exception $e) {
@@ -73,24 +72,24 @@ class WorkersController extends AbstractController
         );
     }
 
-    #[Route('/api/worker/{id}', name: 'get_worker_by_id', methods: ['GET'])]
-    #[OA\Tag(name: 'Get worker by id')]
+    #[Route('/api/entity/{id}', name: 'get_entity_by_id', methods: ['GET'])]
+    #[OA\Tag(name: 'Get Entity by id')]
     #[OA\Response(
         response: Response::HTTP_OK,
-        description: 'Worker loaded successful',
-        content: new Model(type: Worker::class)
+        description: 'Entity loaded successful',
+        content: new Model(type: Entity::class)
     )]
     #[OA\Response(
         response: Response::HTTP_GONE,
-        description: 'Worker not found',
+        description: 'Entity not found',
         content: new OA\JsonContent(
             example: '{"status": false}'
         )
     )]
-    public function getWorkerById(int $id, UserInterface $user): Response
+    public function getEntityById(int $id, UserInterface $user): Response
     {
         try {
-            $worker = $this->serviceWorker->getWorgerBy($id);
+            $entity = $this->serviceEntity->getEntityBy($id);
         } catch (NotFoundHttpException $e) {
             $error = $e->getMessage();
 
@@ -104,8 +103,8 @@ class WorkersController extends AbstractController
             );
         }
 
-        if (empty($worker)) {
-            $error = 'Worker with ID:' . $id . ' not found';
+        if (empty($entity)) {
+            $error = 'Entity with ID:' . $id . ' not found';
 
             $this->logger->alert($error);
 
@@ -118,13 +117,63 @@ class WorkersController extends AbstractController
         }
 
         return $this->json(
-            $worker,
+            $entity,
             Response::HTTP_OK
         );
     }
 
-    #[Route('/api/worker/create', name: 'create_worker', methods: ['POST'])]
-    #[OA\Tag(name: 'Create new worker')]
+    #[Route('/api/entity-by-name/{name}', name: 'get_entity_by_name', methods: ['GET'])]
+    #[OA\Tag(name: 'Get Entity by name')]
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Entity loaded successful',
+        content: new Model(type: Entity::class)
+    )]
+    #[OA\Response(
+        response: Response::HTTP_GONE,
+        description: 'Entity not found',
+        content: new OA\JsonContent(
+            example: '{"status": false}'
+        )
+    )]
+    public function getEntityByName(string $name, UserInterface $user): Response
+    {
+        try {
+            $entity = $this->serviceEntity->getEntityByName($name);
+        } catch (NotFoundHttpException $e) {
+            $error = $e->getMessage();
+
+            $this->logger->alert($error);
+
+            return $this->json(
+                [
+                    'status' => false
+                ],
+                Response::HTTP_GONE
+            );
+        }
+
+        if (empty($entity)) {
+            $error = 'Entity with Name:' . $name . ' not found';
+
+            $this->logger->alert($error);
+
+            return $this->json(
+                [
+                    'status' => false
+                ],
+                Response::HTTP_GONE
+            );
+        }
+
+        return $this->json(
+            $entity,
+            Response::HTTP_OK
+        );
+    }
+
+    #[Route('/api/entity/create', name: 'create_entity', methods: ['POST'])]
+    #[OA\Tag(name: 'Create new Entity')]
     #[OA\RequestBody(
         content: new OA\MediaType(
             mediaType: "application/json",
@@ -135,17 +184,17 @@ class WorkersController extends AbstractController
     )]
     #[OA\Response(
         response: Response::HTTP_CREATED,
-        description: 'Worker successful created',
-        content: new Model(type: Worker::class)
+        description: 'Entity successful created',
+        content: new Model(type: Entity::class)
     )]
     #[OA\Response(
         response: Response::HTTP_INTERNAL_SERVER_ERROR,
-        description: 'Worker not created',
+        description: 'Entity not created',
         content: new OA\JsonContent(
             example: '{"status": false}'
         )
     )]
-    public function createWorker(Request $request, UserInterface $user): Response
+    public function createEntity(Request $request, UserInterface $user): Response
     {
         try {
             /** @var DTOCreate $dto */
@@ -172,16 +221,16 @@ class WorkersController extends AbstractController
             );
         }
 
-        $worker = $this->serviceWorker->createWorker(new Worker(), $dto);
+        $entity = $this->serviceEntity->createEntity(new Entity(), $dto);
 
         return $this->json(
-            $worker,
+            $entity,
             Response::HTTP_CREATED
         );
     }
 
-    #[Route('/api/worker/{id}', name: 'update_worker_by_id', methods: ['PUT'])]
-    #[OA\Tag(name: 'Update worker by id')]
+    #[Route('/api/entity/{id}', name: 'update_entity_by_id', methods: ['PUT'])]
+    #[OA\Tag(name: 'Update Entity by id')]
     #[OA\RequestBody(
         content: new OA\MediaType(
             mediaType: "application/json",
@@ -192,20 +241,20 @@ class WorkersController extends AbstractController
     )]
     #[OA\Response(
         response: Response::HTTP_OK,
-        description: 'Worker successful updated',
-        content: new Model(type: Worker::class)
+        description: 'Entity successful updated',
+        content: new Model(type: Entity::class)
     )]
     #[OA\Response(
         response: Response::HTTP_GONE,
-        description: 'Worker not found',
+        description: 'Entity not found',
         content: new OA\JsonContent(
             example: '{"status": false}'
         )
     )]
-    public function updateWorker(int $id, Request $request, UserInterface $user): Response
+    public function updateEntity(int $id, Request $request, UserInterface $user): Response
     {
         try {
-            $worker = $this->serviceWorker->getWorgerBy($id);
+            $entity = $this->serviceEntity->getEntityBy($id);
         } catch (NotFoundHttpException $e) {
             $this->logger->alert($e->getMessage());
 
@@ -217,8 +266,8 @@ class WorkersController extends AbstractController
             );
         }
 
-        if (empty($worker)) {
-            $this->logger->alert('Worker with ID:' . $id . ' not found');
+        if (empty($entity)) {
+            $this->logger->alert('Entity with ID:' . $id . ' not found');
 
             return $this->json(
                 [
@@ -243,34 +292,34 @@ class WorkersController extends AbstractController
             );
         }
 
-        $worker = $this->serviceWorker->updateWorkerByWorker($worker, $dto);
+        $entity = $this->serviceEntity->updateEntityByEntity($entity, $dto);
 
         return $this->json(
-            $worker,
+            $entity,
             Response::HTTP_OK
         );
     }
 
-    #[Route('/api/worker/{id}', name: 'delete_worker_by_id', methods: ['DELETE'])]
-    #[OA\Tag(name: 'Delete worker by id')]
+    #[Route('/api/entity/{id}', name: 'delete_entity_by_id', methods: ['DELETE'])]
+    #[OA\Tag(name: 'Delete Entity by id')]
     #[OA\Response(
         response: Response::HTTP_OK,
-        description: 'Worker deleted successful',
+        description: 'Entity deleted successful',
         content: new OA\JsonContent(
             example: '{"status": true}'
         )
     )]
     #[OA\Response(
         response: Response::HTTP_GONE,
-        description: 'Worker not found',
+        description: 'Entity not found',
         content: new OA\JsonContent(
             example: '{"status": false}'
         )
     )]
-    public function deleteWorker(int $id, UserInterface $user): Response
+    public function deleteEntity(int $id, UserInterface $user): Response
     {
         try {
-            $this->serviceWorker->deleteWorkerById($id);
+            $this->serviceEntity->deleteEntityById($id);
 
             return $this->json(
                 [
