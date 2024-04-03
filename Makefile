@@ -18,6 +18,9 @@ up:
 build:
 	${DOCKER_COMPOSE} build
 
+jwt_generate:
+	sudo bin/console lexik:jwt:generate-keypair
+
 start:
 	${DOCKER_COMPOSE} start
 
@@ -30,23 +33,23 @@ rm:
 restart: stop start
 
 composer_update:
-	sudo docker exec -t symfony6-php-fpm bash -c 'composer update'
+	sudo docker exec -t ${PHP_FPM_HOST} bash -c 'composer update'
 
 composer_install:
-	sudo docker exec -t symfony6-php-fpm bash -c 'composer install'
+	sudo docker exec -t ${PHP_FPM_HOST} bash -c 'composer install'
 
 test_install:
-	sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:database:create --env=test'
-	sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate --env=test  --no-interaction'
+	sudo docker exec -t ${PHP_FPM_HOST} bash -c './bin/console doctrine:database:create --env=test'
+	sudo docker exec -t ${PHP_FPM_HOST} bash -c './bin/console doctrine:migrations:migrate --env=test  --no-interaction'
 
 test:
-	sudo docker exec -t symfony6-php-fpm bash -c './bin/phpunit'
+	sudo docker exec -t ${PHP_FPM_HOST} bash -c './bin/phpunit'
 
 make_migration:
-	sudo docker exec -t symfony6-php-fpm bash -c './bin/console make:migration'
+	sudo docker exec -t ${PHP_FPM_HOST} bash -c './bin/console make:migration'
 
 migration:
-	sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate --no-interaction'
+	sudo docker exec -t ${PHP_FPM_HOST} bash -c './bin/console doctrine:migrations:migrate --no-interaction'
 
 migration_down:
-	sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate prev --no-interaction'
+	sudo docker exec -t ${PHP_FPM_HOST} bash -c './bin/console doctrine:migrations:migrate prev --no-interaction'
