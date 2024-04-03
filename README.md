@@ -28,10 +28,7 @@ $ sudo chmod -R 777 ./var
 ```shell
 make migration
 ```
-Или, если make не установлен, используйте:
-```shell
-sudo docker exec -t symfony6-php-fpm bash -c './bin/console doctrine:migrations:migrate --no-interaction'
-```
+
 6. После успешной установки, получите документацию по следующей ссылке:
    http://127.0.0.1:9580/api/doc
 
